@@ -1,7 +1,7 @@
 = Reproduction for the (yet to be reported) Vert.x-web bug in BodyHandler where it get stuck if it misses the request `onEnd()`
 
 This repository contains a minimal test case showing an issue with Vert.x-web provided request body parsing middle-ware
-[`BodyHandler`](https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BodyHandler.html).
+https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BodyHandler.html[`BodyHandler`].
 
 The problem is that `BodyHandler` needs to register callbacks on the request to handle body data, but before that it checks
 if the request has already been completely read from the socket - if it hasn't it registers its callbacks that when fired
