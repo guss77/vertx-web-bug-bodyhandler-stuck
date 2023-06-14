@@ -1,29 +1,35 @@
 package coil.geek.vertx_test.repro_bodyhandler_stuck;
 
 import java.time.*;
-import java.util.*;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import io.vertx.core.*;
 import io.vertx.ext.web.*;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
+	public void delay(Promise<Void> p, long ms) {
+		new Thread(() -> {
+			try {
+				Thread.sleep(ms);
+				System.out.println(Instant.now() + " Done delaying the processing");
+				p.complete();
+			} catch (Exception e) {
+			}
+		}).start();
+	}
+	
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     var server = vertx.createHttpServer();
     var router = Router.router(vertx);
-    if (config().getBoolean("delay", false)) {
-      System.out.println("Registering delay handler");
-      router.post().handler(ctx -> {
-        System.out.println("Delaying before body processing");
-        // spend some time before calling the next handler
-        new Timer().schedule(new TimerTask() { public void run() {
-          ctx.next();
-        } }, Date.from(Instant.now().plusMillis(50)));
-      });
-    }
+    var delay = config().getLong("delay", 0L);
+    router.post().handler(ctx -> {
+      System.out.println(Instant.now() + " Delaying before body processing");
+      Promise<Void> p = Promise.promise();
+      delay(p, delay);
+      p.future().onSuccess(__ -> ctx.next());
+    });
     router.post().handler(BodyHandler.create());
     router.post().handler(ctx -> {
       ctx.response().end("Hello " + ctx.body().asString());
