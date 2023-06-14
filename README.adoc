@@ -1,0 +1,24 @@
+= Reproduction for the (yet to be reported) Vert.x-web bug in BodyHandler where it get stuck if it misses the request `onEnd()`
+
+This repository contains a minimal test case showing an issue with Vert.x-web provided request body parsing middle-ware
+[`BodyHandler`](https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BodyHandler.html).
+
+The problem is that `BodyHandler` needs to register callbacks on the request to handle body data, but before that it checks
+if the request has already been completely read from the socket - if it hasn't it registers its callbacks that when fired
+at the end of the request - will call `RoutingContext.next()` to move processing to the next handler.
+
+But if the request had already been completely read by the server, when `BodyHandler.handle()` is called - then
+`BodyHandler` doesn't do anything - neither calling `RoutingContext.next()` nor reporting an error: the request
+is simply stuck until the client times out.
+
+image:https://img.shields.io/badge/vert.x-4.4.3-purple.svg[link="https://vertx.io"]
+
+This application was generated using http://start.vertx.io
+
+== Testing
+
+To verify that the problem exists, run the project test suite;
+
+```
+./mvnw clean test
+```
