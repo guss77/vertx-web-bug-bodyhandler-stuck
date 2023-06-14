@@ -13,7 +13,7 @@ is simply stuck until the client times out.
 
 image:https://img.shields.io/badge/vert.x-4.4.3-purple.svg[link="https://vertx.io"]
 
-This application was generated using http://start.vertx.io
+image:https://github.com/guss77/vertx-web-bug-bodyhandler-stuck/actions/workflows/maven.yml/badge.svg[link="vertx-web-bug-bodyhandler-stuck/actions/workflows/maven.yml"]
 
 == Testing
 
