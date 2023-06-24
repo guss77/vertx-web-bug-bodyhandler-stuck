@@ -11,7 +11,10 @@ But if the request had already been completely read by the server, when `BodyHan
 `BodyHandler` doesn't do anything - neither calling `RoutingContext.next()` nor reporting an error: the request
 is simply stuck until the client times out.
 
-image:https://img.shields.io/badge/vert.x-4.4.3-purple.svg[link="https://vertx.io"]
+This issue is supposed to be fixed in [PR #2439](https://github.com/vert-x3/vertx-web/pull/2439) (and later
+changes), which has yet to land in a 4.x release.
+
+image:https://img.shields.io/badge/vert.x-4.4.4-purple.svg[link="https://vertx.io"]
 
 image:https://github.com/guss77/vertx-web-bug-bodyhandler-stuck/actions/workflows/maven.yml/badge.svg[link="https://github.com/guss77/vertx-web-bug-bodyhandler-stuck/actions/workflows/maven.yml"]
 

@@ -18,7 +18,7 @@ public class MainVerticle extends AbstractVerticle {
 			}
 		}).start();
 	}
-	
+
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     var server = vertx.createHttpServer();
@@ -33,6 +33,14 @@ public class MainVerticle extends AbstractVerticle {
     router.post().handler(BodyHandler.create());
     router.post().handler(ctx -> {
       ctx.response().end("Hello " + ctx.body().asString());
+    });
+    router.route().failureHandler(ctx -> {
+      System.err.println(Instant.now() + " Handling failure: " + ctx.statusCode() + " " + ctx.failure());
+      ctx.response().setStatusCode(500).end("Error: " + ctx.failure());
+    });
+    router.errorHandler(500, ctx -> {
+      System.err.println(Instant.now() + " Handling error: " + ctx.statusCode() + " " + ctx.failure());
+      ctx.response().setStatusCode(500).end("Error: " + ctx.failure());
     });
     server.requestHandler(router).listen(config().getInteger("http.port", 8080))
     .onSuccess(__ -> startPromise.complete())
